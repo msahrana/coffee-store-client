@@ -1,5 +1,5 @@
 import {createBrowserRouter} from "react-router-dom";
-import Root from "../../root/Root/Root";
+import Root from "../../layout/Root/Root";
 import ErrorPage from "../../error/ErrorPage/ErrorPage";
 import Home from "../../pages/Home/Home";
 import AddCoffee from "../../pages/AddCoffee/AddCoffee";
