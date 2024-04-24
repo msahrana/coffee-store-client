@@ -1,6 +1,14 @@
 import {Link, NavLink} from "react-router-dom";
+import useAuth from "../../hooks/useAuth/useAuth";
+import Swal from "sweetalert2";
 
 const Navbar = () => {
+  const {user, logOut} = useAuth();
+
+  const handleLogOut = () => {
+    logOut().then(Swal.fire("User Deleted Successfully!")).catch();
+  };
+
   const navLinks = (
     <>
       <li>
@@ -57,9 +65,26 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">{navLinks}</ul>
       </div>
       <div className="navbar-end">
-        <Link to="/login" className="btn">
-          Login
-        </Link>
+        {user ? (
+          <div className="hidden md:flex lg:flex">
+            <img
+              className="size-10 rounded-full mr-2"
+              src={user?.photoURL}
+              alt=""
+            />
+            <p className="mx-2 p-2 rounded">{user?.displayName}</p>
+            <button
+              onClick={handleLogOut}
+              className="bg-red-500 px-2 py-1 rounded-lg text-white"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <Link to="/login" className="btn">
+            Login
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -12,7 +12,21 @@ const Register = () => {
     const photoURL = form.photoURL.value;
     const email = form.email.value;
     const password = form.password.value;
-    console.log(name, photoURL, email, password);
+    /* password authentication */
+    if (password.length < 8) {
+      alert("Password should be at least 8 characters");
+      return;
+    }
+    if (
+      !/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(
+        password
+      )
+    ) {
+      alert(
+        "Password should have one uppercase, one lowercase, one digit & one special character"
+      );
+      return;
+    }
     createUser(email, password)
       .then((result) => {
         Swal.fire({
@@ -29,6 +43,10 @@ const Register = () => {
       })
       .catch((error) => {
         console.log(error);
+        console.log(error.code);
+        if (error.code === "auth/email-already-in-use") {
+          alert("user already created");
+        }
       });
   };
 
