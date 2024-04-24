@@ -1,100 +1,43 @@
-import {Link} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import useAuth from "../../hooks/useAuth/useAuth";
 import Swal from "sweetalert2";
 
-const Register = () => {
-  const {createUser, updateUser, user, setUser} = useAuth();
+const LoginClient = () => {
+  const {signIn} = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const handleRegister = (event) => {
+  const handleLogin = (event) => {
     event.preventDefault();
     const form = event.target;
-    const name = form.name.value;
-    const photoURL = form.photoURL.value;
     const email = form.email.value;
     const password = form.password.value;
-    /* password authentication */
-    if (password.length < 8) {
-      alert("Password should be at least 8 characters");
-      return;
-    }
-    if (
-      !/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(
-        password
-      )
-    ) {
-      alert(
-        "Password should have one uppercase, one lowercase, one digit & one special character"
-      );
-      return;
-    }
-    /* user create */
-    createUser(email, password)
+    console.log(email, password);
+    signIn(email, password)
       .then((result) => {
-        /* for server */
-        const newUser = {name, photoURL, email, password};
-        fetch("http://localhost:5000/user", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(newUser),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.insertedId) {
-              Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "User create successfully!",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }
-          });
-        /* user update */
-        updateUser(name, photoURL).then(() => {
-          console.log(result.user);
-          setUser({...user, displayName: name, photoURL: photoURL});
+        console.log(result.user);
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "User logged in successfully!",
+          showConfirmButton: false,
+          timer: 1500,
         });
+        navigate(location?.state ? location.state : "/");
       })
       .catch((error) => {
         console.log(error);
-        if (error.code === "auth/email-already-in-use") {
-          alert("user already created");
+        console.log(error.code);
+        if (error.code === "auth/invalid-credential") {
+          alert("Password doesn`t match");
         }
       });
   };
 
   return (
-    <div className="w-full max-w-md p-8 space-y-3 rounded-xl border-2 mx-auto mt-3 mb-4">
-      <h1 className="text-2xl font-bold text-center">Please Register</h1>
-      <form onSubmit={handleRegister} className="space-y-6">
-        <div className="space-y-1 text-sm">
-          <label htmlFor="name" className="block dark:text-gray-600">
-            Name
-          </label>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            placeholder="Name Here"
-            required
-            className="w-full px-4 py-3 rounded-md border"
-          />
-        </div>
-        <div className="space-y-1 text-sm">
-          <label htmlFor="photoURL" className="block">
-            photoURL
-          </label>
-          <input
-            type="text"
-            name="photoURL"
-            id="photoURL"
-            placeholder="photoURL Here"
-            required
-            className="w-full px-4 py-3 rounded-md border"
-          />
-        </div>
+    <div className="w-full max-w-md p-8 space-y-3 rounded-xl border-2 mx-auto my-28">
+      <h1 className="text-2xl font-bold text-center">Please Login</h1>
+      <form onSubmit={handleLogin} className="space-y-6">
         <div className="space-y-1 text-sm">
           <label htmlFor="email" className="block">
             Email
@@ -122,13 +65,13 @@ const Register = () => {
           />
         </div>
         <button className="block w-full p-3 text-center rounded-sm bg-red-500 text-xl text-white">
-          Register
+          Login
         </button>
       </form>
       <div className="flex items-center pt-4 space-x-1">
         <div className="flex-1 h-px sm:w-16 dark:bg-gray-300"></div>
         <p className="px-3 text-sm dark:text-gray-600">
-          Register with social accounts
+          Login with social accounts
         </p>
         <div className="flex-1 h-px sm:w-16 dark:bg-gray-300"></div>
       </div>
@@ -162,13 +105,16 @@ const Register = () => {
         </button>
       </div>
       <p className="text-xs text-center sm:px-6 dark:text-gray-600">
-        Already have an account?
-        <Link to="/login" className="text-lg text-red-500 ml-3 font-semibold">
-          Login
+        Don`t have an account?
+        <Link
+          to="/register"
+          className="text-lg text-red-500 ml-3 font-semibold"
+        >
+          Register
         </Link>
       </p>
     </div>
   );
 };
 
-export default Register;
+export default LoginClient;

@@ -2,7 +2,7 @@ import {Link} from "react-router-dom";
 import useAuth from "../../hooks/useAuth/useAuth";
 import Swal from "sweetalert2";
 
-const Register = () => {
+const RegisterClient = () => {
   const {createUser, updateUser, user, setUser} = useAuth();
 
   const handleRegister = (event) => {
@@ -27,31 +27,15 @@ const Register = () => {
       );
       return;
     }
-    /* user create */
     createUser(email, password)
       .then((result) => {
-        /* for server */
-        const newUser = {name, photoURL, email, password};
-        fetch("http://localhost:5000/user", {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-          },
-          body: JSON.stringify(newUser),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.insertedId) {
-              Swal.fire({
-                position: "top-end",
-                icon: "success",
-                title: "User create successfully!",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }
-          });
-        /* user update */
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "User create successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
         updateUser(name, photoURL).then(() => {
           console.log(result.user);
           setUser({...user, displayName: name, photoURL: photoURL});
@@ -171,4 +155,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterClient;

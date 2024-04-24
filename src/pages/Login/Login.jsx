@@ -1,10 +1,43 @@
-import {Link} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import useAuth from "../../hooks/useAuth/useAuth";
+import Swal from "sweetalert2";
 
 const Login = () => {
+  const {signIn} = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogin = (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const email = form.email.value;
+    const password = form.password.value;
+    console.log(email, password);
+    signIn(email, password)
+      .then((result) => {
+        console.log(result.user);
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "User logged in successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        navigate(location?.state ? location.state : "/");
+      })
+      .catch((error) => {
+        console.log(error);
+        console.log(error.code);
+        if (error.code === "auth/invalid-credential") {
+          alert("Password doesn`t match");
+        }
+      });
+  };
+
   return (
     <div className="w-full max-w-md p-8 space-y-3 rounded-xl border-2 mx-auto my-28">
       <h1 className="text-2xl font-bold text-center">Please Login</h1>
-      <form noValidate="" action="" className="space-y-6">
+      <form onSubmit={handleLogin} className="space-y-6">
         <div className="space-y-1 text-sm">
           <label htmlFor="email" className="block">
             Email
