@@ -1,10 +1,41 @@
 import {Link} from "react-router-dom";
+import useAuth from "../../hooks/useAuth/useAuth";
+import Swal from "sweetalert2";
 
 const Register = () => {
+  const {createUser, updateUser, user, setUser} = useAuth();
+
+  const handleRegister = (event) => {
+    event.preventDefault();
+    const form = event.target;
+    const name = form.name.value;
+    const photoURL = form.photoURL.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    console.log(name, photoURL, email, password);
+    createUser(email, password)
+      .then((result) => {
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "User create successfully!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        updateUser(name, photoURL).then(() => {
+          console.log(result.user);
+          setUser({...user, displayName: name, photoURL: photoURL});
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <div className="w-full max-w-md p-8 space-y-3 rounded-xl border-2 mx-auto mt-3 mb-4">
       <h1 className="text-2xl font-bold text-center">Please Register</h1>
-      <form noValidate="" action="" className="space-y-6">
+      <form onSubmit={handleRegister} className="space-y-6">
         <div className="space-y-1 text-sm">
           <label htmlFor="name" className="block dark:text-gray-600">
             Name
@@ -14,6 +45,7 @@ const Register = () => {
             name="name"
             id="name"
             placeholder="Name Here"
+            required
             className="w-full px-4 py-3 rounded-md border"
           />
         </div>
@@ -26,6 +58,7 @@ const Register = () => {
             name="photoURL"
             id="photoURL"
             placeholder="photoURL Here"
+            required
             className="w-full px-4 py-3 rounded-md border"
           />
         </div>
@@ -38,6 +71,7 @@ const Register = () => {
             name="email"
             id="email"
             placeholder="Email Here"
+            required
             className="w-full px-4 py-3 rounded-md border"
           />
         </div>
@@ -50,6 +84,7 @@ const Register = () => {
             name="password"
             id="password"
             placeholder="Password Here"
+            required
             className="w-full px-4 py-3 rounded-md border"
           />
         </div>
