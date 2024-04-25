@@ -29,7 +29,7 @@ const Login = () => {
         console.log(error);
         console.log(error.code);
         if (error.code === "auth/invalid-credential") {
-          alert("Password doesn`t match");
+          alert("Email or Password doesn`t match");
         }
       });
   };
